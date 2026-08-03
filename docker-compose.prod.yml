@@ -1,0 +1,10 @@
+services:
+  php:
+    build:
+      target: prod
+
+  nginx:
+    restart: unless-stopped
+
+  postgres:
+    restart: unless-stopped

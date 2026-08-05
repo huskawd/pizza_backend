@@ -7,9 +7,7 @@ down:
 build:
 	docker compose build
 
-restart:
-	docker compose down
-	docker compose up -d
+restart: down up
 
 logs:
 	docker compose logs -f

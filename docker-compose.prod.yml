@@ -2,9 +2,11 @@ services:
   php:
     build:
       target: prod
+    volumes: []
+    ports: []
 
   nginx:
-    restart: unless-stopped
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
 
-  postgres:
-    restart: unless-stopped
+

@@ -1,0 +1,10 @@
+services:
+  php:
+    environment:
+      APP_ENV: testing
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: pizza_test
+      DB_USERNAME: pizza
+      DB_PASSWORD: pizza

@@ -25,6 +25,37 @@ services:
 
     restart: unless-stopped
 
+  queue:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: dev
+
+    working_dir: /var/www/application
+
+    volumes:
+      - ./application:/var/www/application
+
+    environment:
+      APP_ENV: dev
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    command: php artisan queue:work --tries=1 --timeout=0
+
+    healthcheck:
+      test: [ "NONE" ]
+
+    restart: unless-stopped
+
   postgres:
     image: postgres:17
 

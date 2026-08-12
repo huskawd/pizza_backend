@@ -13,4 +13,4 @@ logs:
 	docker compose logs -f
 
 test:
-	docker compose -f docker-compose.yml -f docker-compose.testing.yml exec php php artisan test
+	docker compose exec php php artisan test

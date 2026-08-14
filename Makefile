@@ -14,3 +14,6 @@ logs:
 
 test:
 	docker compose exec php php artisan test
+
+jwt-secret:
+	docker compose exec php php artisan jwt:secret

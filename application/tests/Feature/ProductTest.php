@@ -3,12 +3,22 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
 {
     use RefreshDatabase;
+
+    private function actingAsAdmin(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $this->actingAs($admin, 'api');
+    }
 
     public function test_can_get_products(): void // список продуктов
     {
@@ -40,6 +50,7 @@ class ProductTest extends TestCase
 
     public function test_returns_404_for_non_existing_product(): void // несуществующий продукт
     {
+        $this->actingAsAdmin();
         $response = $this->getJson('/api/products/999999');
 
         $response->assertNotFound();
@@ -47,6 +58,7 @@ class ProductTest extends TestCase
 
     public function test_can_create_product(): void // продукт с валидными данными
     {
+        $this->actingAsAdmin();
         $data = [
             'name' => 'Margherita',
             'description' => 'Classic pizza',
@@ -69,6 +81,7 @@ class ProductTest extends TestCase
 
     public function test_cannot_create_product_with_invalid_data(): void // продук с невалидными данными
     {
+        $this->actingAsAdmin();
         $data = [
             'name' => '',
             'description' => '',
@@ -93,6 +106,7 @@ class ProductTest extends TestCase
 
     public function test_can_update_product(): void // обновление существующего продукта
     {
+        $this->actingAsAdmin();
         $product = Product::factory()->create();
 
         $data = [
@@ -118,6 +132,7 @@ class ProductTest extends TestCase
 
     public function test_returns_404_when_updating_non_existing_product(): void // обновление несуществующего проекта
     {
+        $this->actingAsAdmin();
         $data = [
             'name' => 'Updated Pizza',
             'description' => 'Updated description',
@@ -133,6 +148,7 @@ class ProductTest extends TestCase
 
     public function test_can_delete_product(): void // удаление существующего проекта
     {
+        $this->actingAsAdmin();
         $product = Product::factory()->create();
 
         $response = $this->deleteJson("/api/products/{$product->id}");
@@ -146,6 +162,7 @@ class ProductTest extends TestCase
 
     public function test_returns_404_when_deleting_non_existing_product(): void // удаление несуществующего проекта
     {
+        $this->actingAsAdmin();
         $response = $this->deleteJson('/api/products/999999');
 
         $response->assertNotFound();

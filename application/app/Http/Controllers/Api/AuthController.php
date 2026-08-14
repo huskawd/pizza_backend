@@ -3,45 +3,41 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Requests\LoginRequest;
 
 class AuthController extends Controller
 {
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
-        ]);
+        $data = $request->validated();
 
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'phone' => $data['phone'],
             'password' => Hash::make($data['password']),
-            'role' => 'user',
+            'role' => 'guest'
         ]);
 
         $token = JWTAuth::fromUser($user);
 
         return response()->json([
-            'user' => $user,
+            'role' => 'guest',
             'token' => $token,
         ]);
     }
 
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
-        ]);
+        $credentials = $request->validated();
 
-        if (!$token = auth('api')->attempt($credentials)) {
+        $token = auth('api')->attempt($credentials);
+        if (!$token) {
             return response()->json([
                 'message' => 'Invalid credentials',
             ], 401);

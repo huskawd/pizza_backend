@@ -56,15 +56,27 @@ class AuthTest extends TestCase
 
     public function test_user_can_logout(): void
     {
-        $user = User::factory()->create([
+        $data = $this->userData();
+
+        User::factory()->create([
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
             'role' => 'guest',
         ]);
 
-        $this->actingAs($user, 'api');
+        $loginResponse = $this->postJson('/api/auth/login', [
+            'email' => $data['email'],
+            'password' => $data['password'],
+        ]);
 
-        $response = $this->postJson('/api/auth/logout');
+        $token = $loginResponse->json('token');
+
+        $response = $this
+            ->withHeader('Authorization', 'Bearer ' . $token)
+            ->postJson('/api/auth/logout');
 
         $response->assertOk();
+
         $response->assertJson([
             'message' => 'Successfully logged out',
         ]);

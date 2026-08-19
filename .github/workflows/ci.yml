@@ -46,7 +46,7 @@ jobs:
         run: docker compose up -d
 
       - name: Install dependencies
-        run: docker compose exec -T php composer install
+        run: docker compose exec -T -u root php composer install
 
       - name: Generate app key
         run: docker compose exec -T php php artisan key:generate

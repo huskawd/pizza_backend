@@ -53,6 +53,10 @@ jobs:
           docker compose exec -T -u root php chown www-data:www-data /var/www/application/.env
           docker compose exec -T -u root php chown -R www-data:www-data /var/www/application/storage
           docker compose exec -T -u root php chown -R www-data:www-data /var/www/application/bootstrap/cache
+          docker compose exec -T -u root php chown -R www-data:www-data /var/www/application/var
+          docker compose exec -T -u root php chmod -R 775 /var/www/application/storage
+          docker compose exec -T -u root php chmod -R 775 /var/www/application/bootstrap/cache
+          docker compose exec -T -u root php chmod -R 775 /var/www/application/var
 
       - name: Generate app key
         run: docker compose exec -T php php artisan key:generate

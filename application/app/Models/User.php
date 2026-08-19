@@ -12,7 +12,8 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -55,7 +56,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->getKey();
     }
 
-    public function getJWTCustomClaims()
+    /**
+     * @return array<string, mixed>
+     */
+    public function getJWTCustomClaims(): array
     {
         return [];
     }

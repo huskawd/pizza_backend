@@ -15,7 +15,7 @@ Route::middleware('auth:api')->post(
     [AuthController::class, 'logout']
 );
 
-Route::middleware(['auth:api', 'admin'])->group(function () {
+Route::middleware(['auth:api', 'admin'])->group(callback: function () {
     Route::post('/products', [ProductController::class, 'store']);
     Route::patch('/products/{product}', [ProductController::class, 'update']);
     Route::delete('/products/{product}', [ProductController::class, 'destroy']);

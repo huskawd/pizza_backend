@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BasketController;
+use App\Http\Controllers\Api\OrderController;
 
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
@@ -31,3 +32,24 @@ Route::middleware('auth:api')->post(
     '/basket/items',
     [BasketController::class, 'store']
 );
+
+Route::middleware('auth:api')->patch(
+    '/basket/items/{item}',
+    [BasketController::class, 'update']
+);
+
+Route::middleware('auth:api')->delete(
+    '/basket/items/{item}',
+    [BasketController::class, 'destroy']
+);
+
+Route::middleware('auth:api')->post(
+    '/orders',
+    [OrderController::class, 'store']
+);
+
+Route::middleware('auth:api')->patch(
+    '/orders/{order}/status',
+    [OrderController::class, 'updateStatus']
+);
+

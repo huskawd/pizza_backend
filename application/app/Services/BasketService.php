@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class BasketService
 {
+    public function __construct(
+        private BasketLimitService $basketLimitService
+    ) {
+    }
+
     public function addItem(
         Basket $basket,
         Product $product,
@@ -20,22 +25,11 @@ class BasketService
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            $limit = match ($product->category) {
-                'pizza' => 10,
-                'drink' => 20,
-                default => throw new \InvalidArgumentException('Unsupported product category'),
-            };
-
-            $currentQuantity = BasketItem::query()
-                ->where('basket_id', $lockedBasket->id)
-                ->whereHas('product', function ($query) use ($product) {
-                    $query->where('category', $product->category);
-                })
-                ->sum('quantity');
-
-            if ($currentQuantity + $quantity > $limit) {
-                throw new \DomainException('Basket category limit exceeded');
-            }
+            $this->basketLimitService->ensureWithinLimit(
+                $lockedBasket->id,
+                $product->category,
+                $quantity
+            );
 
             $item = BasketItem::firstOrCreate(
                 [
@@ -50,6 +44,32 @@ class BasketService
             $item->increment('quantity', $quantity);
 
             return $item->refresh();
+        });
+    }
+
+    public function updateItem(
+        BasketItem $item,
+        int $quantity
+    ): BasketItem {
+        return DB::transaction(function () use ($item, $quantity) {
+            $lockedItem = BasketItem::query()
+                ->with('product')
+                ->whereKey($item->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $this->basketLimitService->ensureWithinLimit(
+                $lockedItem->basket_id,
+                $lockedItem->product->category,
+                $quantity,
+                $lockedItem->id
+            );
+
+            $lockedItem->update([
+                'quantity' => $quantity,
+            ]);
+
+            return $lockedItem->refresh();
         });
     }
 }

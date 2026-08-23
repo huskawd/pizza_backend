@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Basket;
-use Illuminate\Http\JsonResponse;
-use App\Models\BasketItem;
-use Illuminate\Http\Request;
-use App\Services\BasketService;
-use App\Models\Product;
 use App\Http\Requests\AddBasketItemRequest;
+use App\Http\Requests\UpdateBasketItemRequest;
+use App\Models\Basket;
+use App\Models\BasketItem;
+use App\Models\Product;
+use App\Services\BasketService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class BasketController extends Controller
 {
@@ -54,5 +55,35 @@ class BasketController extends Controller
         return response()->json([
             'data' => $item->load('product'),
         ]);
+    }
+
+    public function update(
+        UpdateBasketItemRequest $request,
+        BasketItem $item,
+        BasketService $basketService
+    ): JsonResponse {
+        $data = $request->validated();
+
+        try {
+            $item = $basketService->updateItem(
+                $item,
+                $data['quantity']
+            );
+        } catch (\DomainException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 422);
+        }
+
+        return response()->json([
+            'data' => $item->load('product'),
+        ]);
+    }
+
+    public function destroy(BasketItem $item): Response
+    {
+        $item->delete();
+
+        return response()->noContent();
     }
 }

@@ -52,4 +52,3 @@ Route::middleware('auth:api')->patch(
     '/orders/{order}/status',
     [OrderController::class, 'updateStatus']
 );
-

@@ -30,8 +30,7 @@ class BasketController extends Controller
     public function store(
         AddBasketItemRequest $request,
         BasketService $basketService
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $data = $request->validated();
 
         $basket = Basket::firstOrCreate([

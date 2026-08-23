@@ -18,12 +18,16 @@ class Product extends Model
         'weight',
         'category',
     ];
-
+    /**
+     * @return HasMany<BasketItem, $this>
+     */
     public function basketItems(): HasMany
     {
         return $this->hasMany(BasketItem::class);
     }
-
+    /**
+     * @return HasMany<OrderItem, $this>
+     */
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);

@@ -10,7 +10,9 @@ use Tests\TestCase;
 class OrderTest extends TestCase
 {
     use RefreshDatabase;
-
+    /**
+     * @return array<string, string>
+     */
     private function deliveryAddress(): array
     {
         return [

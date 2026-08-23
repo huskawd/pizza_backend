@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Enums\OrderStatus;
-
+/**
+ * @property OrderStatus $status
+ */
 class Order extends Model
 {
     protected $fillable = [
@@ -29,24 +31,18 @@ class Order extends Model
             'status' => OrderStatus::class,
         ];
     }
-
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
+    /**
+     * @return HasMany<OrderItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
-    }
-
-    public function basket(): HasOne
-    {
-        return $this->hasOne(Basket::class);
-    }
-
-    public function orders(): HasMany
-    {
-        return $this->hasMany(Order::class);
     }
 }

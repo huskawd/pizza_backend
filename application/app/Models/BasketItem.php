@@ -12,12 +12,16 @@ class BasketItem extends Model
         'product_id',
         'quantity',
     ];
-
+    /**
+     * @return BelongsTo<Basket, $this>
+     */
     public function basket(): BelongsTo
     {
         return $this->belongsTo(Basket::class);
     }
-
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

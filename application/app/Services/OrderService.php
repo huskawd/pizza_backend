@@ -13,6 +13,9 @@ class OrderService
         private OrderItemService $orderItemService
     ) {
     }
+    /**
+     * @param array<string, mixed> $data
+     */
     public function createOrder(User $user, array $data): Order
     {
         return DB::transaction(function () use ($user, $data) {

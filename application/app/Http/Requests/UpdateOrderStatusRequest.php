@@ -12,7 +12,9 @@ class UpdateOrderStatusRequest extends FormRequest
     {
         return true;
     }
-
+    /**
+     * @return array<string, array<int, string|\Illuminate\Contracts\Validation\ValidationRule>>
+     */
     public function rules(): array
     {
         return [

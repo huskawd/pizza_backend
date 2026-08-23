@@ -11,12 +11,16 @@ class Basket extends Model
     protected $fillable = [
         'user_id',
     ];
-
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
+    /**
+     * @return HasMany<BasketItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(BasketItem::class);

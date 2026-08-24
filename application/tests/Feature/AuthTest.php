@@ -4,12 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Illuminate\Support\Facades\Hash;
+use Tests\Unit\TestCase;
 
 class AuthTest extends TestCase
 {
     use RefreshDatabase;
+    /**
+     * @return array<string, string>
+     */
     private function userData(): array
     {
         return [
@@ -37,7 +40,7 @@ class AuthTest extends TestCase
     {
         $data = $this->userData();
 
-        User::factory()->create([
+        User::factory()->create(attributes: [
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => 'guest',
@@ -49,7 +52,7 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertOk();
-        $response->assertJsonStructure([
+        $response->assertJsonStructure(structure: [
             'token',
         ]);
     }
@@ -58,7 +61,7 @@ class AuthTest extends TestCase
     {
         $data = $this->userData();
 
-        User::factory()->create([
+        User::factory()->create(attributes: [
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => 'guest',
@@ -69,7 +72,7 @@ class AuthTest extends TestCase
             'password' => $data['password'],
         ]);
 
-        $token = $loginResponse->json('token');
+        $token = $loginResponse->json(key: 'token');
 
         $response = $this
             ->withHeader('Authorization', 'Bearer ' . $token)
@@ -77,7 +80,7 @@ class AuthTest extends TestCase
 
         $response->assertOk();
 
-        $response->assertJson([
+        $response->assertJson(value: [
             'message' => 'Successfully logged out',
         ]);
     }

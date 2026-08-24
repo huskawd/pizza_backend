@@ -36,7 +36,7 @@ class AuthController extends Controller
     {
         $credentials = $request->validated();
 
-        $token = auth('api')->attempt($credentials);
+        $token = auth(guard: 'api')->attempt($credentials);
         if (!$token) {
             return response()->json([
                 'message' => 'Invalid credentials',
@@ -50,7 +50,7 @@ class AuthController extends Controller
 
     public function logout(): JsonResponse
     {
-        auth('api')->logout();
+        auth(guard: 'api')->logout();
 
         return response()->json([
             'message' => 'Successfully logged out',

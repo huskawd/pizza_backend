@@ -22,7 +22,7 @@ class ProductController extends Controller
     {
         $products = Product::paginate(self::PER_PAGE);
 
-        return ProductResource::collection($products);
+        return ProductResource::collection(resource: $products);
     }
 
     /**
@@ -32,9 +32,9 @@ class ProductController extends Controller
     {
         $product = Product::create($request->validated());
 
-        return (new ProductResource($product))
+        return (new ProductResource(resource: $product))
             ->response()
-            ->setStatusCode(Response::HTTP_CREATED);
+            ->setStatusCode(code: Response::HTTP_CREATED);
     }
 
     /**
@@ -42,7 +42,7 @@ class ProductController extends Controller
      */
     public function show(Product $product): ProductResource
     {
-        return new ProductResource($product);
+        return new ProductResource(resource: $product);
     }
 
     /**
@@ -50,9 +50,9 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product): ProductResource
     {
-        $product->update($request->validated());
+        $product->update(attributes: $request->validated());
 
-        return new ProductResource($product);
+        return new ProductResource(resource: $product);
     }
 
     /**

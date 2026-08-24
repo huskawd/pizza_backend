@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Unit\TestCase;
 
 class ProductTest extends TestCase
 {
@@ -13,13 +13,16 @@ class ProductTest extends TestCase
 
     private function actingAsAdmin(): void
     {
-        $admin = User::factory()->create([
+        $admin = User::factory()->create(attributes: [
             'role' => 'admin',
         ]);
 
         $this->actingAs($admin, 'api');
     }
 
+    /**
+     * @return array<string, string|int>
+     */
     private function productData(): array
     {
         return [
@@ -34,12 +37,12 @@ class ProductTest extends TestCase
 
     public function test_can_get_products(): void // список продуктов
     {
-        Product::factory()->count(3)->create();
+        Product::factory()->count(count: 3)->create();
 
         $response = $this->getJson('/api/products');
 
         $response->assertOk();
-        $response->assertJsonCount(3, 'data');
+        $response->assertJsonCount(count: 3, key: 'data');
     }
 
     public function test_returns_empty_products_list_when_no_products_exist(): void // пустой список
@@ -47,7 +50,7 @@ class ProductTest extends TestCase
         $response = $this->getJson('/api/products');
 
         $response->assertOk();
-        $response->assertJsonCount(0, 'data');
+        $response->assertJsonCount(count: 0, key: 'data');
     }
 
     public function test_can_get_single_product(): void // существующий продукт
@@ -57,7 +60,7 @@ class ProductTest extends TestCase
         $response = $this->getJson("/api/products/{$product->id}");
 
         $response->assertOk();
-        $response->assertJsonPath('data.id', $product->id);
+        $response->assertJsonPath(path: 'data.id', expect: $product->id);
     }
 
     public function test_returns_404_for_non_existing_product(): void // несуществующий продукт
@@ -83,7 +86,7 @@ class ProductTest extends TestCase
 
         $response->assertCreated();
 
-        $response->assertJsonPath('data.name', 'Margherita');
+        $response->assertJsonPath(path: 'data.name', expect: 'Margherita');
 
         $this->assertDatabaseHas('products', [
             'name' => 'Margherita',
@@ -106,7 +109,7 @@ class ProductTest extends TestCase
 
         $response->assertUnprocessable();
 
-        $response->assertJsonValidationErrors([
+        $response->assertJsonValidationErrors(errors: [
             'name',
             'price',
             'weight',
@@ -133,7 +136,7 @@ class ProductTest extends TestCase
 
         $response->assertOk();
 
-        $response->assertJsonPath('data.name', 'Updated Pizza');
+        $response->assertJsonPath(path: 'data.name', expect: 'Updated Pizza');
 
         $this->assertDatabaseHas('products', [
             'id' => $product->id,
@@ -190,7 +193,7 @@ class ProductTest extends TestCase
 
     public function test_guest_user_cannot_create_product(): void
     {
-        $user = User::factory()->create([
+        $user = User::factory()->create(attributes: [
             'role' => 'guest',
         ]);
 
@@ -203,7 +206,7 @@ class ProductTest extends TestCase
 
     public function test_admin_can_create_product(): void
     {
-        $user = User::factory()->create([
+        $user = User::factory()->create(attributes: [
             'role' => 'admin',
         ]);
 

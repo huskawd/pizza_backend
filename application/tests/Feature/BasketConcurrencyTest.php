@@ -25,15 +25,15 @@ class BasketConcurrencyTest extends TestCase
         }
 
         return array_map(
-            fn (Process $process) => $process->getExitCode(),
-            $processes
+            callback: fn (Process $process) => $process->getExitCode(),
+            array: $processes
         );
     }
 
     private function startAddProcess(Basket $basket, Product $product): Process
     {
         $process = new Process(
-            [
+            command: [
                 PHP_BINARY,
                 'artisan',
                 'basket:add-test',
@@ -41,7 +41,7 @@ class BasketConcurrencyTest extends TestCase
                 (string) $product->id,
                 '1',
             ],
-            base_path()
+            cwd: base_path()
         );
 
         $process->start();
@@ -51,7 +51,7 @@ class BasketConcurrencyTest extends TestCase
 
     public function test_parallel_add_does_not_exceed_pizza_limit(): void
     {
-        $user = User::factory()->create([
+        $user = User::factory()->create(attributes: [
             'role' => 'guest',
         ]);
 
@@ -59,7 +59,7 @@ class BasketConcurrencyTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-        $product = Product::factory()->create([
+        $product = Product::factory()->create(attributes: [
             'category' => 'pizza',
         ]);
 
@@ -80,11 +80,11 @@ class BasketConcurrencyTest extends TestCase
 
         $exitCodes = $this->waitForProcesses(...$processes);
 
-        sort($exitCodes);
+        sort(array: $exitCodes);
 
         $item = BasketItem::query()
-            ->where('basket_id', $basket->id)
-            ->where('product_id', $product->id)
+            ->where(column: 'basket_id', operator: $basket->id)
+            ->where(column: 'product_id', operator: $product->id)
             ->firstOrFail();
 
         $this->assertSame(10, $item->quantity);

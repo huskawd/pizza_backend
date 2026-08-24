@@ -21,14 +21,14 @@ class BasketService
     ): BasketItem {
         return DB::transaction(function () use ($basket, $product, $quantity) {
             $lockedBasket = Basket::query()
-                ->whereKey($basket->id)
+                ->whereKey(id: $basket->id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
             $this->basketLimitService->ensureWithinLimit(
-                $lockedBasket->id,
-                $product->category,
-                $quantity
+                basketId: $lockedBasket->id,
+                category: $product->category,
+                quantity: $quantity
             );
 
             $item = BasketItem::firstOrCreate(
@@ -53,16 +53,16 @@ class BasketService
     ): BasketItem {
         return DB::transaction(function () use ($item, $quantity) {
             $lockedItem = BasketItem::query()
-                ->with('product')
-                ->whereKey($item->id)
+                ->with(relations: 'product')
+                ->whereKey(id: $item->id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
             $this->basketLimitService->ensureWithinLimit(
-                $lockedItem->basket_id,
-                $lockedItem->product->category,
-                $quantity,
-                $lockedItem->id
+                basketId: $lockedItem->basket_id,
+                category: $lockedItem->product->category,
+                quantity: $quantity,
+                excludeItemId: $lockedItem->id
             );
 
             $lockedItem->update([

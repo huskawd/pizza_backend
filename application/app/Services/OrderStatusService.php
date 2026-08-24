@@ -34,16 +34,16 @@ class OrderStatusService
         $currentStatus = $order->status;
 
         if (!in_array(
-            $newStatus,
-            self::ALLOWED_TRANSITIONS[$currentStatus->value],
-            true
+            needle: $newStatus,
+            haystack: self::ALLOWED_TRANSITIONS[$currentStatus->value],
+            strict: true
         )) {
             throw new \DomainException(
-                'Invalid order status transition'
+                message: 'Invalid order status transition'
             );
         }
 
-        $order->update([
+        $order->update(attributes: [
             'status' => $newStatus,
         ]);
 

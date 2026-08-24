@@ -17,13 +17,13 @@ class BasketItem extends Model
      */
     public function basket(): BelongsTo
     {
-        return $this->belongsTo(Basket::class);
+        return $this->belongsTo(related: Basket::class);
     }
     /**
      * @return BelongsTo<Product, $this>
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(related: Product::class);
     }
 }

@@ -12,7 +12,7 @@ class BasketLimitService
             'pizza' => 10,
             'drink' => 20,
             default => throw new \InvalidArgumentException(
-                'Unsupported product category'
+                message: 'Unsupported product category'
             ),
         };
     }
@@ -23,13 +23,13 @@ class BasketLimitService
         ?int $excludeItemId = null
     ): int {
         $query = BasketItem::query()
-            ->where('basket_id', $basketId)
-            ->whereHas('product', function ($query) use ($category) {
-                $query->where('category', $category);
+            ->where(column: 'basket_id', operator: $basketId)
+            ->whereHas(relation: 'product', callback: function ($query) use ($category) {
+                $query->where(column: 'category', operator: $category);
             });
 
         if ($excludeItemId !== null) {
-            $query->where('id', '!=', $excludeItemId);
+            $query->where(column: 'id', operator: '!=', value: $excludeItemId);
         }
 
         return (int) $query->sum('quantity');
@@ -41,16 +41,16 @@ class BasketLimitService
         int $quantity,
         ?int $excludeItemId = null
     ): void {
-        $limit = $this->limitFor($category);
+        $limit = $this->limitFor(category: $category);
 
         $currentQuantity = $this->quantityFor(
-            $basketId,
-            $category,
-            $excludeItemId
+            basketId: $basketId,
+            category: $category,
+            excludeItemId: $excludeItemId
         );
 
         if ($currentQuantity + $quantity > $limit) {
-            throw new \DomainException('Basket category limit exceeded');
+            throw new \DomainException(message: 'Basket category limit exceeded');
         }
     }
 }

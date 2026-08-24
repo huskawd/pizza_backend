@@ -20,13 +20,13 @@ class OrderService
     {
         return DB::transaction(function () use ($user, $data) {
             $basket = Basket::query()
-                ->with('items.product')
-                ->where('user_id', $user->id)
+                ->with(relations: 'items.product')
+                ->where(column: 'user_id', operator: $user->id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
             if ($basket->items->isEmpty()) {
-                throw new \DomainException('Basket is empty');
+                throw new \DomainException(message: 'Basket is empty');
             }
 
             $totalPrice = $basket->items->sum(
@@ -46,7 +46,7 @@ class OrderService
                 'delivery_apartment' => $data['delivery_apartment'] ?? null,
                 'delivery_postcode' => $data['delivery_postcode'],
             ]);
-            $this->orderItemService->createFromBasket($order, $basket);
+            $this->orderItemService->createFromBasket(order: $order, basket: $basket);
 
             $basket->items()->delete();
 

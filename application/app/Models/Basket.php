@@ -16,13 +16,13 @@ class Basket extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(related: User::class);
     }
     /**
      * @return HasMany<BasketItem, $this>
      */
     public function items(): HasMany
     {
-        return $this->hasMany(BasketItem::class);
+        return $this->hasMany(related: BasketItem::class);
     }
 }

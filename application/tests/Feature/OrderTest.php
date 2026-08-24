@@ -28,13 +28,13 @@ class OrderTest extends TestCase
 
     public function test_user_can_create_order_from_basket(): void
     {
-        $user = User::factory()->create([
+        $user = User::factory()->create(attributes: [
             'role' => 'guest',
         ]);
 
         $this->actingAs($user, 'api');
 
-        $product = Product::factory()->create([
+        $product = Product::factory()->create(attributes: [
             'price' => 500,
             'category' => 'pizza',
         ]);
@@ -51,8 +51,8 @@ class OrderTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonPath('data.status', 'created')
-            ->assertJsonPath('data.total_price', 1000);
+            ->assertJsonPath(path: 'data.status', expect: 'created')
+            ->assertJsonPath(path: 'data.total_price', expect: 1000);
 
         $this->assertDatabaseHas('order_items', [
             'product_id' => $product->id,
@@ -64,7 +64,7 @@ class OrderTest extends TestCase
 
     public function test_cannot_create_order_with_empty_basket(): void
     {
-        $user = User::factory()->create([
+        $user = User::factory()->create(attributes: [
             'role' => 'guest',
         ]);
 
@@ -78,8 +78,8 @@ class OrderTest extends TestCase
         );
 
         $response
-            ->assertStatus(422)
-            ->assertJson([
+            ->assertStatus(status: 422)
+            ->assertJson(value: [
                 'message' => 'Basket is empty',
             ]);
     }

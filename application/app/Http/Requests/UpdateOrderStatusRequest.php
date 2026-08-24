@@ -20,7 +20,7 @@ class UpdateOrderStatusRequest extends FormRequest
         return [
             'status' => [
                 'required',
-                Rule::enum(OrderStatus::class),
+                Rule::enum(type: OrderStatus::class),
             ],
         ];
     }

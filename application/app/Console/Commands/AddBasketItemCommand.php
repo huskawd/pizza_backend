@@ -15,12 +15,12 @@ class AddBasketItemCommand extends Command
 
     public function handle(BasketService $basketService): int
     {
-        $basket = Basket::findOrFail($this->argument('basket'));
-        $product = Product::findOrFail($this->argument('product'));
-        $quantity = (int) $this->argument('quantity');
+        $basket = Basket::findOrFail($this->argument(key: 'basket'));
+        $product = Product::findOrFail($this->argument(key: 'product'));
+        $quantity = (int) $this->argument(key: 'quantity');
 
         try {
-            $basketService->addItem($basket, $product, $quantity);
+            $basketService->addItem(basket: $basket, product: $product, quantity: $quantity);
 
             return self::SUCCESS;
         } catch (\DomainException) {

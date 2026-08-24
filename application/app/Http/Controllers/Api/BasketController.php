@@ -17,7 +17,7 @@ class BasketController extends Controller
     public function index(): JsonResponse
     {
         $basket = Basket::firstOrCreate([
-            'user_id' => auth('api')->id(),
+            'user_id' => auth(guard: 'api')->id(),
         ]);
 
         $basket->load('items.product');
@@ -34,16 +34,16 @@ class BasketController extends Controller
         $data = $request->validated();
 
         $basket = Basket::firstOrCreate([
-            'user_id' => auth('api')->id(),
+            'user_id' => auth(guard: 'api')->id(),
         ]);
 
         $product = Product::findOrFail($data['product_id']);
 
         try {
             $item = $basketService->addItem(
-                $basket,
-                $product,
-                $data['quantity']
+                basket: $basket,
+                product: $product,
+                quantity: $data['quantity']
             );
         } catch (\DomainException $exception) {
             return response()->json([
@@ -52,7 +52,7 @@ class BasketController extends Controller
         }
 
         return response()->json([
-            'data' => $item->load('product'),
+            'data' => $item->load(relations: 'product'),
         ]);
     }
 
@@ -65,8 +65,8 @@ class BasketController extends Controller
 
         try {
             $item = $basketService->updateItem(
-                $item,
-                $data['quantity']
+                item: $item,
+                quantity: $data['quantity']
             );
         } catch (\DomainException $exception) {
             return response()->json([
@@ -75,7 +75,7 @@ class BasketController extends Controller
         }
 
         return response()->json([
-            'data' => $item->load('product'),
+            'data' => $item->load(relations: 'product'),
         ]);
     }
 

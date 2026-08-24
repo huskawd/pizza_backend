@@ -19,8 +19,8 @@ class OrderController extends Controller
     ): JsonResponse {
         try {
             $order = $orderService->createOrder(
-                auth('api')->user(),
-                $request->validated()
+                user: auth(guard: 'api')->user(),
+                data: $request->validated()
             );
         } catch (\DomainException $exception) {
             return response()->json([
@@ -39,8 +39,8 @@ class OrderController extends Controller
     ): JsonResponse {
         try {
             $order = $orderStatusService->changeStatus(
-                $order,
-                OrderStatus::from($request->validated('status'))
+                order: $order,
+                newStatus: OrderStatus::from(value: $request->validated(key: 'status'))
             );
         } catch (\DomainException $exception) {
             return response()->json([

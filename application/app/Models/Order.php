@@ -37,13 +37,13 @@ class Order extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(related: User::class);
     }
     /**
      * @return HasMany<OrderItem, $this>
      */
     public function items(): HasMany
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(related: OrderItem::class);
     }
 }

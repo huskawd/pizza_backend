@@ -14,7 +14,7 @@ class BasketTest extends TestCase
 
     private function actingAsUser(): User
     {
-        $user = User::factory()->create([
+        $user = User::factory()->create(attributes: [
             'role' => 'guest',
         ]);
 
@@ -27,7 +27,7 @@ class BasketTest extends TestCase
     {
         $user = $this->actingAsUser();
 
-        $product = Product::factory()->create([
+        $product = Product::factory()->create(attributes: [
             'category' => 'pizza',
         ]);
 
@@ -51,7 +51,7 @@ class BasketTest extends TestCase
     {
         $this->actingAsUser();
 
-        $product = Product::factory()->create([
+        $product = Product::factory()->create(attributes: [
             'category' => 'pizza',
         ]);
 
@@ -64,8 +64,8 @@ class BasketTest extends TestCase
             'product_id' => $product->id,
             'quantity' => 1,
         ])
-            ->assertStatus(422)
-            ->assertJson([
+            ->assertStatus(status: 422)
+            ->assertJson(value: [
                 'message' => 'Basket category limit exceeded',
             ]);
     }

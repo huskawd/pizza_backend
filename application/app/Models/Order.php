@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Enums\OrderStatus;
+use App\Enums\DeliveryType;
 
 /**
  * @property OrderStatus $status
+ * @property DeliveryType $delivery_type
  */
 class Order extends Model
 {
@@ -24,12 +26,14 @@ class Order extends Model
         'delivery_entrance',
         'delivery_apartment',
         'delivery_postcode',
+        'delivery_type',
     ];
 
     protected function casts(): array
     {
         return [
             'status' => OrderStatus::class,
+            'delivery_type' => DeliveryType::class,
         ];
     }
     /**

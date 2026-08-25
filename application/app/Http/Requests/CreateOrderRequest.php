@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use App\Enums\DeliveryType;
 
 class CreateOrderRequest extends FormRequest
 {
@@ -24,6 +26,7 @@ class CreateOrderRequest extends FormRequest
             'delivery_entrance' => ['nullable', 'string'],
             'delivery_apartment' => ['nullable', 'string'],
             'delivery_postcode' => ['required', 'string'],
+            'delivery_type' => ['required', Rule::enum(type: DeliveryType::class)],
         ];
     }
 }

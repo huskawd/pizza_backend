@@ -6,11 +6,12 @@ use App\Models\Basket;
 use App\Models\BasketItem;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use App\Actions\Basket\EnsureBasketCategoryLimit;
 
 class BasketService
 {
     public function __construct(
-        private BasketLimitService $basketLimitService
+        private EnsureBasketCategoryLimit $ensureBasketCategoryLimit
     ) {
     }
 
@@ -25,7 +26,7 @@ class BasketService
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            $this->basketLimitService->ensureWithinLimit(
+            $this->ensureBasketCategoryLimit->execute(
                 basketId: $lockedBasket->id,
                 category: $product->category,
                 quantity: $quantity
@@ -52,14 +53,18 @@ class BasketService
         int $quantity
     ): BasketItem {
         return DB::transaction(function () use ($item, $quantity) {
-            $lockedItem = BasketItem::query()
-                ->with(relations: 'product')
-                ->whereKey(id: $item->id)
+            $lockedBasket = Basket::query()
+                ->with(relations: 'items.product')
+                ->whereKey(id: $item->basket_id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            $this->basketLimitService->ensureWithinLimit(
-                basketId: $lockedItem->basket_id,
+            $lockedItem = $lockedBasket->items
+                ->where('id', $item->id)
+                ->firstOrFail();
+
+            $this->ensureBasketCategoryLimit->execute(
+                basketId: $lockedBasket->id,
                 category: $lockedItem->product->category,
                 quantity: $quantity,
                 excludeItemId: $lockedItem->id

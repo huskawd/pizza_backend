@@ -23,6 +23,7 @@ class OrderTest extends TestCase
             'delivery_entrance' => '2',
             'delivery_apartment' => '15',
             'delivery_postcode' => '125609',
+            'delivery_type' => 'courier',
         ];
     }
 
@@ -44,15 +45,24 @@ class OrderTest extends TestCase
             'quantity' => 2,
         ])->assertOk();
 
+        $this->assertDatabaseHas('basket_items', [
+            'product_id' => $product->id,
+            'quantity' => 2,
+        ]);
+
         $response = $this->postJson(
             '/api/orders',
             $this->deliveryAddress()
         );
 
+        $response->dump();
+
         $response
             ->assertCreated()
             ->assertJsonPath(path: 'data.status', expect: 'created')
             ->assertJsonPath(path: 'data.total_price', expect: 1000);
+
+        $this->assertDatabaseCount('basket_items', 0);
 
         $this->assertDatabaseHas('order_items', [
             'product_id' => $product->id,

@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\Unit\TestCase;
+use Tests\TestCase;
 
 class ProductTest extends TestCase
 {

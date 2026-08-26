@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Services\BasketService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use App\Http\Requests\DeleteBasketItemRequest;
 
 class BasketController extends Controller
 {
@@ -79,10 +80,11 @@ class BasketController extends Controller
         ]);
     }
 
-    public function destroy(BasketItem $item): Response
-    {
+    public function destroy(
+        DeleteBasketItemRequest $request,
+        BasketItem $item
+    ): Response {
         $item->delete();
-
         return response()->noContent();
     }
 }

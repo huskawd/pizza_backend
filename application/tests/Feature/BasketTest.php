@@ -148,4 +148,40 @@ class BasketTest extends TestCase
             'quantity' => 5,
         ]);
     }
+
+    public function test_user_cannot_delete_another_users_basket_item(): void
+    {
+        $owner = User::factory()->create(attributes: [
+            'role' => 'guest',
+        ]);
+
+        $attacker = User::factory()->create(attributes: [
+            'role' => 'guest',
+        ]);
+
+        $basket = Basket::create([
+            'user_id' => $owner->id,
+        ]);
+
+        $product = Product::factory()->create(attributes: [
+            'category' => 'pizza',
+        ]);
+
+        $item = BasketItem::create([
+            'basket_id' => $basket->id,
+            'product_id' => $product->id,
+            'quantity' => 2,
+        ]);
+
+        $this->actingAs($attacker, 'api');
+
+        $this->deleteJson("/api/basket/items/{$item->id}")
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('basket_items', [
+            'id' => $item->id,
+            'basket_id' => $basket->id,
+            'quantity' => 2,
+        ]);
+    }
 }

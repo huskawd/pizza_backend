@@ -13,7 +13,7 @@ class EnsureBasketCategoryLimit
         int $quantity,
         ?int $excludeItemId = null
     ): void {
-        $limit = ProductCategory::from($category)->basketLimit();
+        $limit = ProductCategory::from(value: $category)->basketLimit();
 
         $currentQuantity = $this->quantityFor(
             basketId: $basketId,
@@ -23,7 +23,7 @@ class EnsureBasketCategoryLimit
 
         if ($currentQuantity + $quantity > $limit) {
             throw new \DomainException(
-                'Basket category limit exceeded'
+                message: 'Basket category limit exceeded'
             );
         }
     }
@@ -34,13 +34,13 @@ class EnsureBasketCategoryLimit
         ?int $excludeItemId = null
     ): int {
         $query = BasketItem::query()
-            ->where('basket_id', $basketId)
-            ->whereHas('product', function ($query) use ($category) {
-                $query->where('category', $category);
+            ->where(column: 'basket_id', operator: $basketId)
+            ->whereHas(relation: 'product', callback: function ($query) use ($category) {
+                $query->where(column: 'category', operator: $category);
             });
 
         if ($excludeItemId !== null) {
-            $query->where('id', '!=', $excludeItemId);
+            $query->where(column: 'id', operator: '!=', value: $excludeItemId);
         }
 
         return (int) $query->sum('quantity');

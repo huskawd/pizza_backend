@@ -128,7 +128,7 @@ class BasketTest extends TestCase
     {
         $user = $this->actingAsUser();
 
-        $product = Product::factory()->create([
+        $product = Product::factory()->create(attributes: [
             'category' => 'pizza',
         ]);
 
